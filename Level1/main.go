@@ -24,7 +24,7 @@ func main() {
 		// read file
 		s := bufio.NewScanner(f)
 		for s.Scan() {
-			fmt.Println(s.Text())
+			fmt.Println(s.Text()) // ここがcatの動きで全て表示という出力結果
 		}
 
 		// output
