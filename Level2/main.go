@@ -8,6 +8,21 @@ import (
 	"strings"
 )
 
+func search(s *bufio.Scanner, pattern string, nFlag bool) {
+	lineNumber := 1
+	for s.Scan() {
+		line := s.Text()
+		if strings.Contains(line, pattern) {
+			if nFlag {
+				fmt.Printf("%d:%s\n", lineNumber, line)
+			} else {
+				fmt.Println(line)
+			}
+			lineNumber++
+		}
+	}
+}
+
 func main() {
 	nFlag := flag.Bool("n", false, "行番号を表示します") //-n が指定された時に *nFlag の中身が true になる
 	flag.Parse()
@@ -27,18 +42,7 @@ func main() {
 
 	if len(files) == 0 {
 		scan := bufio.NewScanner(os.Stdin)
-		lineNumber := 1
-		for scan.Scan() {
-			line := scan.Text()
-			if strings.Contains(line, pattern) {
-				if *nFlag {
-					fmt.Printf("%d:%s\n", lineNumber, line)
-				} else {
-					fmt.Println(line)
-				}
-				lineNumber++
-			}
-		}
+		search(scan, pattern, *nFlag) //search関数によって重複処理をまとめ
 	} else {
 		for _, file := range files {
 			f, err := os.Open(file)
@@ -48,21 +52,9 @@ func main() {
 			}
 			defer f.Close()
 
-			s := bufio.NewScanner(f)
-			lineNumber := 1
-			for s.Scan() {
-				//fmt.Println(s.Text()) ここが全て表示となっていたため条件設定
-				line := s.Text()
-				if strings.Contains(line, pattern) { // パターンが含まれていたら、この{}の中が実行される
-					if *nFlag {
-						fmt.Printf("%d:%s\n", lineNumber, line)
-					} else {
-						fmt.Println(line)
-					}
-					lineNumber++
-				}
-			}
+			scan := bufio.NewScanner(f)
+			search(scan, pattern, *nFlag)
 		}
 	}
-	//fmt.Println(pattern)
+	//fmt.Println(pattern) ここの出力は不要
 }
