@@ -18,8 +18,8 @@ func search(s *bufio.Scanner, pattern string, nFlag bool) {
 			} else {
 				fmt.Println(line)
 			}
-			lineNumber++
 		}
+		lineNumber++
 	}
 }
 
