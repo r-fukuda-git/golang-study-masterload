@@ -5,12 +5,6 @@ import (
 	"math/rand"
 )
 
-// 一番初めはmain関数から始めないといけない
-func main() {
-	mainFirst()
-	mainSecond()
-}
-
 func mainFirst() {
 	// まずは出力できるか確認
 	fmt.Println("my favorite number is", rand.Intn(100))
