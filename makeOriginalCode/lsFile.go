@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/user"
 )
 
 // mainパッケージにて設定し、bashのls機能を再現しようとしている
@@ -20,19 +21,33 @@ func nilProcess(err error) { // err errorと引数をつけることで外から
 // 本処理実行
 func lsFile() {
 	dir, err := os.Getwd()
-	nilProcess(err) // errという変数を持ってくることでこの関数はエラー型と認識する
-	fmt.Println(dir)
+	nilProcess(err)  // errという変数を持ってくることでこの関数はエラー型と認識する
+	fmt.Println(dir) // これはフルパスを取得している
 
+	// fileName, err := os.ReadDir(dir) // ←この状態だとカレントディレクトリの情報を取得してしまっているため、ループで一つずつのファイルを処理する必要がある
 	fileName, err := os.ReadDir(dir)
-	nilProcess(err)
-	fmt.Println(fileName)
+	for _, fileNames := range fileName {
+		nilProcess(err)
+		fmt.Println(fileNames)
 
-	fileSize, err := os.Stat(dir)
-	nilProcess(err)
-	fmt.Println(fileSize)
+		// ここで1つのファイル情報を取得しているため
+		// 詳細を出力させる
+		fileSize, err := os.Stat(dir)
+		nilProcess(err)
+		fmt.Println(fileSize)
 
-	// 今後やりたいこと
-	// ディレクトリにあるファイルの取得はできているからそれに対して個別にするようにしたい
+		// 詳細に表示できたので、ここから変えていく
+		userId, err := user.LookupId(dir)
+		nilProcess(err)
+		fmt.Println(userId)
+	}
+
+	// nilProcess(err) //上記にループ文に加える
+	// fmt.Println(fileName) //上記にループ文に加える
+
+	// fileSize, err := os.Stat(dir) //上記にループ文に加える
+	// nilProcess(err) //上記にループ文に加える
+	// fmt.Println(fileSize) //上記にループ文に加える
 }
 
 //	ヒント
@@ -42,3 +57,8 @@ func lsFile() {
 //	パーミッション,os.Stat -> FileInfo,FileInfo.Mode()
 //	更新日時,os.Stat -> FileInfo,FileInfo.ModTime()
 //	隠しファイルの判定,文字列操作,"strings.HasPrefix(name, ""."")"
+// os.ReadDir(path): 指定したフォルダの中にある「ファイル名のリスト」を取得します。
+// os.Stat(path): 特定のファイルについて、もっと深く、詳細な情報を取得します。
+// user.LookupId(uid): 「UIDが 0 の人の名前を教えて！」とOSに問い合わせるパッケージです。
+// Time.Format(layout): 日付データを、指定した見た目の文字列（string）に変換します。
+// オプション機能を実装するために使用する標準パッケージは flag です。
